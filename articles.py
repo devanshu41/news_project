@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 #
-# A buggy web service in need of a database.
 
 from flask import Flask, request, redirect, url_for
 
-from articlesdb import get_posts, add_post
+from articlesdb import get_posts
 
 app = Flask(__name__)
 
@@ -15,7 +14,7 @@ HTML_WRAP = '''\
   <head>
     <title>DB Forum</title>
     <style>
-      h1, form { text-align: center; }
+      h1, h2, form { text-align: center; }
       textarea { width: 400px; height: 100px; }
       div.post { border: 1px solid #999;
                  padding: 10px 10px;
@@ -26,37 +25,36 @@ HTML_WRAP = '''\
   </head>
   <body>
     <h1>DB newsdata</h1>
-    <form method=post>
-      <div><textarea id="content" name="content"></textarea></div>
-      <div><button id="go" type="submit">Post message</button></div>
-    </form>
     <!-- post content will go here -->
 %s
   </body>
 </html>
 '''
 
-# HTML template for an individual comment
-POST = '''\
+# HTML template for Query 1
+POST1 = '''\
     <div class=post><em class=date>%s</em><br>%s</div>
 '''
 
+# HTML template for Query 2
+POST2 = '''\
+    <div class=post><em class=date>%s</em><br>%s</div>
+'''
+
+# HTML template for Query 3
+POST3 = '''\
+    <div class=post><em class=date>%s %%</em><br>%s</div>
+'''
 
 @app.route('/', methods=['GET'])
 def main():
   '''Main page of the forum.'''
-  posts = "".join(POST % (integer, text) for text, integer in get_posts())
+  posts1 = "".join(POST1 % (integer, text) for text, integer in get_posts("Q1"))
+  posts2 = "".join(POST2 % (integer, text) for text, integer in get_posts("Q2"))
+  posts3 = "".join(POST3 % (integer, text) for text, integer in get_posts("Q3"))
+  posts = "<h2>What are the most popular three articles of all time?</h2>" + posts1 + "<h2>Who are the most popular article authors of all time?</h2>" + posts2 + "<h2>On which days did more than 1% of requests lead to errors?</h2>" + posts3
   html = HTML_WRAP % posts
   return html
-
-
-# @app.route('/', methods=['POST'])
-# def post():
-#   '''New post submission.'''
-#   message = request.form['content']
-#   add_post(message)
-#   return redirect(url_for('main'))
-
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=8000)
