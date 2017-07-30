@@ -7,3 +7,6 @@ Udacity news log project
 - All the queries are written in articlesdb.py file
 
 - The webpage will be running on the url http://localhost:8000
+
+- I assumed in the first part that the status of the arrticles does not matter as a matter of fact it does but the question does not say that.
+
